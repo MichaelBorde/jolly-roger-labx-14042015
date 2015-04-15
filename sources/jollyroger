@@ -1,0 +1,27 @@
+source "sources/episode.sh"
+
+programme() {
+  local episodes="$1"
+  local soustitres="$2"
+
+  local episode
+  while read episode; do
+    _copie_le_soustitre_correspondant
+  done < <(find "${episodes}" -name "*.avi")
+}
+
+_copie_le_soustitre_correspondant() {
+  local soustitre
+  while read soustitre; do
+    _copie_le_soustitre_sil_correspond
+  done < <(find "${soustitres}" -name "*.srt")
+}
+
+_copie_le_soustitre_sil_correspond() {
+  if episode__correspondent "${episode}" "${soustitre}"; then
+    local nom_final="$(episode__soustitre_final "${episode}")"
+    cp "${soustitre}" "${nom_final}"
+  fi
+}
+
+programme "$@"
